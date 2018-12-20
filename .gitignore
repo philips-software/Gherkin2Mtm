@@ -1,0 +1,8 @@
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
+# Sonarlint files
+.sonarlint
+
+# ReSharper is a .NET coding add-in
+*.DotSettings.user

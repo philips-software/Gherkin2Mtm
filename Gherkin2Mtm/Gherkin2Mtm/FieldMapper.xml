@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Fields>
+  <TestCaseField>
+    <Name>SRS</Name>
+    <Tag>SRS</Tag>
+    <Required>true</Required>
+    <AllowMultiple>false</AllowMultiple>
+    <Prefix>eCareManager\</Prefix>
+  </TestCaseField>
+  <TestCaseField>
+    <Name>Requirement ID</Name>
+    <Tag>Requirement</Tag>
+    <Required>true</Required>
+    <AllowMultiple>true</AllowMultiple>
+    <Prefix></Prefix>
+  </TestCaseField>
+  <TestCaseField>
+    <Name>Release</Name>
+    <Tag>Release</Tag>
+    <Required>true</Required>
+    <AllowMultiple>false</AllowMultiple>
+    <Prefix></Prefix>
+  </TestCaseField>
+</Fields>
