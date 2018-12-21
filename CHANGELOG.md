@@ -8,5 +8,6 @@ and this project uses the version of main tool as main version number .
 
 ### Added
 - Initial commit
+- Add presentation about Gherkin2Mtm 
 
 [Unreleased]: https://github.com/philips-software/Gherkin2Mtm

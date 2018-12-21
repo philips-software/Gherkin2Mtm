@@ -38,6 +38,9 @@ Once the solution is built, use the following commandline to kick off the publis
     - path to a folder
     - multiple file paths separated by a semi-colon  
 
+Presentation about Gherkin2Mtm:
+[![Powerpoint](./docs/Gherkin2Mtm.png)](./docs/Gherkin2Mtm.pptx)
+
 ## How to test the software
 Feature files with different data are available inside tests folder to test the software with the usage given above. Plan is to automate these tests
 
