@@ -1,5 +1,8 @@
 # Gherkin2Mtm
 
+[![Build Status](https://travis-ci.com/philips-software/Gherkin2Mtm.svg?branch=master)](https://travis-ci.com/philips-software/Gherkin2Mtm)
+[![Slack](https://philips-software-slackin.now.sh/badge.svg)](https://philips-software-slackin.now.sh)
+
 **Description**: When you have your manual tests represented in Gherkin for various reasons such as business, reviwable, etc., and have the testing be managed thru MTM, you would want the Gherkins be available in MTM. You can then use this tool to publish the Gherkins in the local storage to the Microsoft test management hosted in either the on-prem TFS or Azure DevOps. 
 
   - **Technology stack**: .Net framework, Gherkin parser, TFS API
