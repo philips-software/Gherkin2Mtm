@@ -50,6 +50,7 @@ Feature files with different data are available inside tests folder to test the 
 ## Contact / Getting help
 
 [Maintainers](MAINTAINERS.md)
+[![Slack](https://philips-software-slackin.now.sh/badge.svg)](https://philips-software-slackin.now.sh)
 
 ## License
 

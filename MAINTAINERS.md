@@ -1,1 +1,2 @@
-Sreedhar Puttagunta - sree_puttagunta@hotmail.com
+- [Sreedhar Puttagunta](sree_puttagunta@hotmail.com)
+- [Jeroen Knoops](jeroen.knoops@philips.com)
