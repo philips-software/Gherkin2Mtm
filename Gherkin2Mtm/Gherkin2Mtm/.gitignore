@@ -10,6 +10,8 @@ bld/
 [Oo]bj/
 [Ll]og/
 
+*.sln.DotSettings
+
 # Files built by Visual Studio
 *.vspscc
 
