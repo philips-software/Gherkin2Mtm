@@ -1,25 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup Label="Globals">
-    <SccProjectName>%24/VisicuCommon/Automation/Gherkin2Mtm/Gherkin2MtmApi</SccProjectName>
-    <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
-    <SccAuxPath>http://devtfs2012:8080/tfs/philips%2520visicu</SccAuxPath>
-    <SccLocalPath>.</SccLocalPath>
-  </PropertyGroup>
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CodeAnalysisRuleSet>Gherkin2MtmApi.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CodeAnalysisRuleSet>Gherkin2MtmApi.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="gherkin" Version="4.0.0" />
     <PackageReference Include="log4net" Version="2.0.8" />
