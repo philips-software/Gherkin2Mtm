@@ -1,2 +1,2 @@
 - [Sreedhar Puttagunta](https://github.com/puttagunta)
-- [Jeroen Knoops](jeroen.knoops@philips.com)
+- [Jeroen Knoops](https://github.com/JeroenKnoops)
