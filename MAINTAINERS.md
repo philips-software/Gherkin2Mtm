@@ -1,2 +1,2 @@
-- [Sreedhar Puttagunta](sree_puttagunta@hotmail.com)
-- [Jeroen Knoops](jeroen.knoops@philips.com)
+- [Sreedhar Puttagunta](https://github.com/puttagunta)
+- [Jeroen Knoops](https://github.com/JeroenKnoops)
