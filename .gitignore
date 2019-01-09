@@ -5,5 +5,4 @@
 .sonarlint
 
 # ReSharper is a .NET coding add-in
-*.sln.DotSettings
-*.DotSettings.user
+*.DotSettings.*
