@@ -1,2 +1,9 @@
 language: csharp
-solution: Gherkin2Mtm.sln
+mono: none
+dotnet: 2.0.0
+
+install:
+- dotnet restore
+
+script:
+ - dotnet build
