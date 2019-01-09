@@ -124,9 +124,7 @@
       <BuildOutputInPackage Include="..\lib\Microsoft.WITDataStore64.dll" />
     </ItemGroup>
   </Target>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(SolutionDir)Gherkin2Mtm\lib\*.* $(TargetDir) /S /E /R /C /I /Y" />
+  <Target Name="CopyCustomContent" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="..\lib\Microsoft.WITDataStore64.dll" DestinationFolder="$(TargetDir)" OverwriteReadOnlyFiles="true"/>
   </Target>
-
 </Project>
