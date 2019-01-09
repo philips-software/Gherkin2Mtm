@@ -1,6 +1,2 @@
-os: windows
 language: csharp
 solution: Gherkin2Mtm.sln
-mono:
-  - latest
-  - 5.18.0
