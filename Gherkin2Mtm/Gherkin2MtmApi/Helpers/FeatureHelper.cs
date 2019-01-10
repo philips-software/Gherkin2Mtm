@@ -203,6 +203,7 @@ namespace Gherkin2MtmApi.Helpers
                     {
                         testCase.Actions.Clear();
                         SaveChanges(teamProject, background, testCase, scenarioDefinition, hash, area, tags, fieldsCollection);
+                        continue;
                     }
                 }
                 catch (DeniedOrNotExistException)
@@ -210,6 +211,7 @@ namespace Gherkin2MtmApi.Helpers
                     // This could happen when a test case is deleted from the MTM but exists in the corresponding feature file
                     Logger.Info(ResourceStrings.DECORATION, $"Linked test case, {mtmIdTag.Name}, is not found");
                 }
+                SaveChanges(teamProject, background, null, scenarioDefinition, hash, area, tags, fieldsCollection);
             }
         }
 
