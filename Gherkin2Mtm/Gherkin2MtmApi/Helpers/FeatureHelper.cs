@@ -10,7 +10,6 @@ using Gherkin2MtmApi.Models;
 using Gherkin2MtmApi.Utils;
 using Microsoft.TeamFoundation.TestManagement.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Microsoft.VisualStudio.Services.Common;
 using Field = Microsoft.TeamFoundation.WorkItemTracking.Client.Field;
 using ITestBase = Microsoft.TeamFoundation.TestManagement.Client.ITestBase;
 
@@ -203,6 +202,7 @@ namespace Gherkin2MtmApi.Helpers
                     {
                         testCase.Actions.Clear();
                         SaveChanges(teamProject, background, testCase, scenarioDefinition, hash, area, tags, fieldsCollection);
+                        continue;
                     }
                 }
                 catch (DeniedOrNotExistException)
@@ -210,6 +210,8 @@ namespace Gherkin2MtmApi.Helpers
                     // This could happen when a test case is deleted from the MTM but exists in the corresponding feature file
                     Logger.Info(ResourceStrings.DECORATION, $"Linked test case, {mtmIdTag.Name}, is not found");
                 }
+                // Need to create a test case when the link is failed
+                SaveChanges(teamProject, background, null, scenarioDefinition, hash, area, tags, fieldsCollection);
             }
         }
 
