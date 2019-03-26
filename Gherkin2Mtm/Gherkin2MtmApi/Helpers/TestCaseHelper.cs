@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,8 +35,8 @@ namespace Gherkin2MtmApi.Helpers
                 return false;
             }
 
-            var matchedFields = UpdateMappedFields(scenarioTags, testCase, testCaseFields);
-            var tags = GetUnmappedTags(scenarioTags, matchedFields);
+            var fieldMapper = UpdateMappedFields(scenarioTags, testCase, testCaseFields);
+            var tags = GetUnmappedTags(scenarioTags, fieldMapper["matchedFields"]);
             if (tags.EndsWith(",", StringComparison.InvariantCulture))
             {
                 tags = tags.TrimEnd(',');
@@ -44,7 +45,7 @@ namespace Gherkin2MtmApi.Helpers
             var tagsFieldValue = testCase.WorkItem.Fields[SyncUtil.TagsField].Value.ToString();
             if (tags.Equals(tagsFieldValue, StringComparison.InvariantCulture))
             {
-                return matchedFields.Count > 0;
+                return fieldMapper["modifiedFields"].Count > 0;
             }
 
             testCase.WorkItem.Fields[SyncUtil.TagsField].Value = tags;
@@ -76,10 +77,11 @@ namespace Gherkin2MtmApi.Helpers
             return true;
         }
 
-        private static IList<TestCaseField> UpdateMappedFields(IEnumerable<Tag> scenarioTags, ITestBase testCase,
+        private static IDictionary<string, IList<TestCaseField>> UpdateMappedFields(IEnumerable<Tag> scenarioTags, ITestBase testCase,
             IEnumerable<TestCaseField> testCaseFields)
         {
             var matchedFields = new List<TestCaseField>();
+            var modifiedFields = new List<TestCaseField>();
             foreach (var testCaseField in testCaseFields)
             {
                 var tagValue = GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
@@ -104,6 +106,7 @@ namespace Gherkin2MtmApi.Helpers
 
                     Logger.Info($"{testCaseField.Name}:{tagValue}");
                     testCase.WorkItem.Fields[testCaseField.Name].Value = tagValue;
+                    modifiedFields.Add(testCaseField);
                 }
                 catch (Exception exception)
                 {
@@ -111,7 +114,12 @@ namespace Gherkin2MtmApi.Helpers
                 }
             }
 
-            return matchedFields;
+            var fieldResultMapper = new Dictionary<string, IList<TestCaseField>>
+            {
+                {"matchedFields", matchedFields},
+                {"modifiedFields", modifiedFields}
+            };
+            return fieldResultMapper;
         }
 
         private static string GetTagValue(IEnumerable<Tag> scenarioTags, string tagName, string prefix)
