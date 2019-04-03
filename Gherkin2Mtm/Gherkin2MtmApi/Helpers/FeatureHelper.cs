@@ -198,10 +198,14 @@ namespace Gherkin2MtmApi.Helpers
                 try
                 {
                     var testCase = teamProject.TestCases.Find(int.Parse(testCaseId, CultureInfo.InvariantCulture));
-                    if (testCase != null && UpdateTestCase(testCase, scenarioDefinition, hash, fieldsCollection))
+                    if (testCase != null)
                     {
-                        testCase.Actions.Clear();
-                        SaveChanges(teamProject, background, testCase, scenarioDefinition, hash, area, tags, fieldsCollection);
+                        if (UpdateTestCase(testCase, scenarioDefinition, hash, fieldsCollection)) {
+                            testCase.Actions.Clear();
+                            SaveChanges(teamProject, background, testCase, scenarioDefinition, hash, area, tags,
+                                fieldsCollection);
+                        }
+
                         continue;
                     }
                 }
