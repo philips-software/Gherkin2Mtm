@@ -18,15 +18,22 @@ namespace Gherkin2MtmApi.Helpers
     public static class FeatureHelper
     {
         private static readonly Logger Logger = Logger.GetLogger(typeof(FeatureHelper));
+        private static AdoHelper _adoHelper;
 
-        public static void WorkoutFeatures(ITestManagementTeamProject teamProject, string featurePath,
+        public static void WorkoutFeatures(CommandLineOptions commandLineOptions, ITestManagementTeamProject teamProject, string featurePath,
             string area, IList<TestCaseField> fieldsCollection)
         {
+            _adoHelper = new AdoHelper(commandLineOptions);
             var featureFiles = GetFeatureFiles(featurePath);
             foreach (var featureFile in featureFiles)
             {
                 WorkoutFeature(teamProject, featureFile, area, fieldsCollection);
             }
+        }
+
+        public static string GetWorkItemField(string fieldName, string workItemId)
+        {
+            return _adoHelper.GetWorkItemFieldValue(fieldName, workItemId).Result;
         }
 
         private static IEnumerable<string> GetFeatureFiles(string featuresPath)

@@ -25,5 +25,6 @@
         public const string DECORATION = "************** {0} ****************";
         public const string ABORTED_MESSAGE = "Aborted: {0}";
         public const string REASON = "Gherkin2Mtm";
+        public const string REQUIREMENT_TAG_NAME = "Requirement";
     }
 }
