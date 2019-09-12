@@ -39,6 +39,9 @@
     <None Update="FieldMapper.xsd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="merge.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Tests\Features\1.feature">
       <Generator></Generator>
     </None>
@@ -125,6 +128,6 @@
     </ItemGroup>
   </Target>
   <Target Name="CopyCustomContent" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="..\lib\Microsoft.WITDataStore64.dll" DestinationFolder="$(TargetDir)" OverwriteReadOnlyFiles="true"/>
+    <Copy SourceFiles="..\lib\Microsoft.WITDataStore64.dll" DestinationFolder="$(TargetDir)" OverwriteReadOnlyFiles="true" />
   </Target>
 </Project>
