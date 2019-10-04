@@ -1,7 +1,7 @@
 ﻿using CommandLine;
 using CommandLine.Text;
 
-namespace Gherkin2Mtm.Helpers
+namespace Gherkin2MtmApi.Helpers
 {
     public class CommandLineOptions
     {
@@ -17,13 +17,13 @@ namespace Gherkin2Mtm.Helpers
         public string PersonalAccessToken { get; set; }
         [Option('f', "featuresPath", Required = true)]
         public string FeaturesPath { get; set; }
-        [Option('v', "verbose", DefaultValue = true,
+        [Option('v', "verbose",  DefaultValue = true,
             HelpText = "Prints all messages to standard output.")]
         public bool Verbose { get; set; }
         [ParserState]
         public IParserState LastParserState { get; set; }
-        [HelpOption]
 
+        [HelpOption]
         public string GetUsage()
         {
             return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));

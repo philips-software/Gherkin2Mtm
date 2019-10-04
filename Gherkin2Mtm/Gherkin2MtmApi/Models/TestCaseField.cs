@@ -21,5 +21,8 @@ namespace Gherkin2MtmApi.Models
 
         [System.Xml.Serialization.XmlElement("Prefix")]
         public string Prefix { get; set; }
+
+        [System.Xml.Serialization.XmlElement("RequirementField")]
+        public string RequirementField { get; set; }
     }
 }

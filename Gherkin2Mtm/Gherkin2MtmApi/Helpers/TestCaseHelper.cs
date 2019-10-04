@@ -36,6 +36,11 @@ namespace Gherkin2MtmApi.Helpers
             }
 
             var fieldMapper = UpdateMappedFields(scenarioTags, testCase, testCaseFields);
+            if (fieldMapper.Count <= 0)
+            {
+                return false;
+            }
+
             var tags = GetUnmappedTags(scenarioTags, fieldMapper["matchedFields"]);
             if (tags.EndsWith(",", StringComparison.InvariantCulture))
             {
@@ -84,10 +89,33 @@ namespace Gherkin2MtmApi.Helpers
             var modifiedFields = new List<TestCaseField>();
             foreach (var testCaseField in testCaseFields)
             {
-                var tagValue = GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
-                if (tagValue.Length > 0)
+                var tag = GetTag(scenarioTags, testCaseField.Tag);
+                var tagValue = "";
+                if (tag == null)
                 {
+                    var requirementField = testCaseField.RequirementField;
+                    if (requirementField == null || requirementField.Trim().Length <= 0)
+                    {
+                        continue;
+                    }
+
                     matchedFields.Add(testCaseField);
+                    var requirementId = GetTagValue(scenarioTags, SyncUtil.REQUIREMENT_TAG_NAME, "");
+                    try
+                    {
+                        tagValue = FeatureHelper.GetWorkItemField(testCaseField.RequirementField, requirementId);
+                    } catch(Exception exception)
+                    {
+                        Logger.Error($"Check that the requirement, {requirementId} exists: {exception.StackTrace}");
+                        return new Dictionary<string, IList<TestCaseField>>();
+                    }
+                } else
+                {
+                    tagValue = GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
+                    if (tagValue.Length > 0)
+                    {
+                        matchedFields.Add(testCaseField);
+                    }
                 }
 
                 if (!testCaseField.AllowMultiple && tagValue.Contains(","))
@@ -207,6 +235,15 @@ namespace Gherkin2MtmApi.Helpers
             }
 
             StepHelper.AddSteps(testCase, background.Steps, SyncUtil.BackgroundPrefix, false);
+        }
+
+        private static Tag GetTag(IEnumerable<Tag> tags, string tagName)
+        {
+            return tags.ToList<Tag>().Find(tag =>
+            {
+                var match = Regex.Match(tag.Name, $"{SyncUtil.TagNameIdPattern}");
+                return string.Equals(match.Groups[1].Value, tagName, StringComparison.InvariantCultureIgnoreCase);
+            });
         }
     }
 }

@@ -44,6 +44,7 @@ namespace Gherkin2Mtm
                 commandLineOptions.Creds,
                 commandLineOptions.PersonalAccessToken);
             FeatureHelper.WorkoutFeatures(
+                commandLineOptions,
                 teamProject,
                 commandLineOptions.FeaturesPath,
                 commandLineOptions.Area,
