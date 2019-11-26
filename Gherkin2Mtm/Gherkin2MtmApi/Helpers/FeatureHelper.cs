@@ -63,7 +63,7 @@ namespace Gherkin2MtmApi.Helpers
                         return new[] { featuresPath };
                     }
 
-                    Logger.Info($"Feature file at path, \"{featuresPath}\" is not found");
+                    Logger.Error($"Feature file at path, \"{featuresPath}\" is not found");
                     return new string[] { };
                 }
                 else
@@ -74,7 +74,7 @@ namespace Gherkin2MtmApi.Helpers
             }
             catch (DirectoryNotFoundException directoryNotFoundException)
             {
-                Logger.Info(directoryNotFoundException.Message);
+                Logger.Error(directoryNotFoundException.Message);
                 return new string[] { };
             }
 
@@ -94,8 +94,8 @@ namespace Gherkin2MtmApi.Helpers
             }
             catch (ParserException parserException)
             {
-                Logger.Info(message);
-                Logger.Info(parserException.Message);
+                Logger.Error(message);
+                Logger.Error(parserException.Message);
                 return;
             }
 
