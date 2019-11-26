@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -90,7 +89,7 @@ namespace Gherkin2MtmApi.Helpers
             foreach (var testCaseField in testCaseFields)
             {
                 var tag = GetTag(scenarioTags, testCaseField.Tag);
-                var tagValue = "";
+                string tagValue;
                 if (tag == null)
                 {
                     var requirementField = testCaseField.RequirementField;
@@ -100,18 +99,21 @@ namespace Gherkin2MtmApi.Helpers
                     }
 
                     matchedFields.Add(testCaseField);
-                    var requirementId = GetTagValue(scenarioTags, SyncUtil.REQUIREMENT_TAG_NAME, "");
-                    try
+                    var requirementIds = GetTagValue(scenarioTags, SyncUtil.REQUIREMENT_TAG_NAME, "");
+                    if (!IsValidRequirement(testCaseField, requirementIds))
                     {
-                        tagValue = FeatureHelper.GetWorkItemField(testCaseField.RequirementField, requirementId);
-                    } catch(Exception exception)
-                    {
-                        Logger.Error($"Check that the requirement, {requirementId} exists: {exception.StackTrace}");
                         return new Dictionary<string, IList<TestCaseField>>();
                     }
+
+                    tagValue = requirementIds;
                 } else
                 {
                     tagValue = GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
+                    if (testCaseField.Tag == SyncUtil.REQUIREMENT_TAG_NAME && !IsValidRequirement(testCaseField, tagValue))
+                    {
+                        return new Dictionary<string, IList<TestCaseField>>();
+                    }
+
                     if (tagValue.Length > 0)
                     {
                         matchedFields.Add(testCaseField);
@@ -148,6 +150,25 @@ namespace Gherkin2MtmApi.Helpers
                 {"modifiedFields", modifiedFields}
             };
             return fieldResultMapper;
+        }
+
+        private static bool IsValidRequirement(TestCaseField testCaseField, string requirementIds)
+        {
+            foreach (var requirementId in requirementIds.Split(','))
+            {
+                try
+                {
+                    var workItemField = FeatureHelper.GetWorkItemField(testCaseField.RequirementField, requirementId);
+                    Logger.Info($"{testCaseField.RequirementField}: {workItemField} for RequirementId: {requirementIds}");
+                }
+                catch (Exception exception)
+                {
+                    Logger.Error($"Check that the requirement, {requirementId} exists: {exception.StackTrace}");
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static string GetTagValue(IEnumerable<Tag> scenarioTags, string tagName, string prefix)
