@@ -14,6 +14,6 @@ git commit -m "Changes made by the Gherkin2Mtm tool ***NO_CI***"
 ECHO GIT STATUS
 git status
 ECHO GIT PUSH %sourceBranch%
-git push --force origin HEAD:%BUILD_SOURCEBRANCH%
+git push --force-with-lease origin HEAD:%BUILD_SOURCEBRANCH%
 ECHO GIT STATUS
 git status
