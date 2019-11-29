@@ -88,36 +88,15 @@ namespace Gherkin2MtmApi.Helpers
             var modifiedFields = new List<TestCaseField>();
             foreach (var testCaseField in testCaseFields)
             {
-                var tag = GetTag(scenarioTags, testCaseField.Tag);
-                string tagValue;
-                if (tag == null)
+                var tagValue = GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
+                if (!testCaseField.Required && tagValue.Length <= 0)
                 {
-                    var requirementField = testCaseField.RequirementField;
-                    if (requirementField == null || requirementField.Trim().Length <= 0)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
+                if (tagValue.Length > 0)
+                {
                     matchedFields.Add(testCaseField);
-                    var requirementIds = GetTagValue(scenarioTags, SyncUtil.REQUIREMENT_TAG_NAME, "");
-                    if (!IsValidRequirement(testCaseField, requirementIds))
-                    {
-                        return new Dictionary<string, IList<TestCaseField>>();
-                    }
-
-                    tagValue = requirementIds;
-                } else
-                {
-                    tagValue = GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
-                    if (testCaseField.Tag == SyncUtil.REQUIREMENT_TAG_NAME && !IsValidRequirement(testCaseField, tagValue))
-                    {
-                        return new Dictionary<string, IList<TestCaseField>>();
-                    }
-
-                    if (tagValue.Length > 0)
-                    {
-                        matchedFields.Add(testCaseField);
-                    }
                 }
 
                 if (!testCaseField.AllowMultiple && tagValue.Contains(","))
@@ -152,26 +131,7 @@ namespace Gherkin2MtmApi.Helpers
             return fieldResultMapper;
         }
 
-        private static bool IsValidRequirement(TestCaseField testCaseField, string requirementIds)
-        {
-            foreach (var requirementId in requirementIds.Split(','))
-            {
-                try
-                {
-                    var workItemField = FeatureHelper.GetWorkItemField(testCaseField.RequirementField, requirementId);
-                    Logger.Info($"{testCaseField.RequirementField}: {workItemField} for RequirementId: {requirementIds}");
-                }
-                catch (Exception exception)
-                {
-                    Logger.Error($"Check that the requirement, {requirementId} exists: {exception.StackTrace}");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private static string GetTagValue(IEnumerable<Tag> scenarioTags, string tagName, string prefix)
+        internal static string GetTagValue(IEnumerable<Tag> scenarioTags, string tagName, string prefix)
         {
             string tagValue;
             var sb = new StringBuilder();
@@ -186,9 +146,11 @@ namespace Gherkin2MtmApi.Helpers
                 tagValue = $"{prefix}{match.Groups[2].Value},";
                 sb.Append(tagValue);
             }
-
+            
             tagValue = sb.ToString();
-            return tagValue.Substring(0, tagValue.LastIndexOf(",", StringComparison.InvariantCulture));
+            return tagValue.Trim().Length <= 0
+                ? tagValue
+                : tagValue.Substring(0, tagValue.LastIndexOf(",", StringComparison.InvariantCulture));
         }
 
         private static string GetUnmappedTags(IEnumerable<Tag> scenarioTags, IEnumerable<TestCaseField> matchedFields)
@@ -256,15 +218,6 @@ namespace Gherkin2MtmApi.Helpers
             }
 
             StepHelper.AddSteps(testCase, background.Steps, SyncUtil.BackgroundPrefix, false);
-        }
-
-        private static Tag GetTag(IEnumerable<Tag> tags, string tagName)
-        {
-            return tags.ToList<Tag>().Find(tag =>
-            {
-                var match = Regex.Match(tag.Name, $"{SyncUtil.TagNameIdPattern}");
-                return string.Equals(match.Groups[1].Value, tagName, StringComparison.InvariantCultureIgnoreCase);
-            });
         }
     }
 }

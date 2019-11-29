@@ -131,19 +131,66 @@ namespace Gherkin2MtmApi.Helpers
             File.WriteAllLines(featureFile, arrLine);
         }
 
-        private static bool ValidateRequiredTags(IEnumerable<Tag> scenarioTags, IEnumerable<TestCaseField> fieldsCollection)
+        private static bool ValidateTags(IEnumerable<Tag> scenarioTags, IEnumerable<TestCaseField> fieldsCollection)
         {
             scenarioTags = scenarioTags.ToList();
             foreach (var testCaseField in fieldsCollection)
             {
-                if (!testCaseField.Required || !IsRequiredFieldMissing(testCaseField, scenarioTags))
+                if (testCaseField.Required && IsRequiredFieldMissing(testCaseField, scenarioTags))
+                {
+                    Logger.Error(
+                        $"{testCaseField.Tag} is a required tag but is not found as one of the tags of the scenario");
+                    return false;
+                }
+
+                var tag = GetTag(scenarioTags, testCaseField.Tag);
+                if (tag == null)
                 {
                     continue;
                 }
 
-                Logger.Error(
-                    $"{testCaseField.Tag} is a required tag but is not found as one of the tags of the scenario");
-                return false;
+                var tagValue = TestCaseHelper.GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
+                if (tagValue.Length <= 0)
+                {
+                    Logger.Error(
+                        $"{testCaseField.Tag} does not have a value associated with it");
+                    return false;
+                }
+
+                if (testCaseField.Tag == SyncUtil.REQUIREMENT_TAG_NAME 
+                    && testCaseField.RequirementField.Trim().Length > 0
+                    && !IsValidRequirement(testCaseField, tagValue))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static Tag GetTag(IEnumerable<Tag> tags, string tagName)
+        {
+            return tags.ToList().Find(tag =>
+            {
+                var match = Regex.Match(tag.Name, $"{SyncUtil.TagNameIdPattern}");
+                return string.Equals(match.Groups[1].Value, tagName, StringComparison.InvariantCultureIgnoreCase);
+            });
+        }
+
+        private static bool IsValidRequirement(TestCaseField testCaseField, string requirementIds)
+        {
+            foreach (var requirementId in requirementIds.Split(','))
+            {
+                try
+                {
+                    var workItemField = GetWorkItemField(testCaseField.RequirementField, requirementId);
+                    Logger.Info($"{testCaseField.RequirementField}: {workItemField} for RequirementId: {requirementId}");
+                }
+                catch (Exception)
+                {
+                    Logger.Error($"Check that the requirement, {requirementId} exists");
+                    return false;
+                }
             }
 
             return true;
@@ -154,7 +201,7 @@ namespace Gherkin2MtmApi.Helpers
             foreach (var scenarioTag in scenarioTags)
             {
                 var regMatchGroups = Regex.Match(scenarioTag.Name, $"{SyncUtil.TagNameIdPattern}").Groups;
-                if (string.Equals(regMatchGroups[1].Value, field.Tag, StringComparison.InvariantCultureIgnoreCase))
+                if (String.Equals(regMatchGroups[1].Value, field.Tag, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return false;
                 }
@@ -204,7 +251,7 @@ namespace Gherkin2MtmApi.Helpers
                 var testCaseId = Regex.Match(mtmIdTag.Name, SyncUtil.MtmTcIdPattern).Groups[1].Value;
                 try
                 {
-                    var testCase = teamProject.TestCases.Find(int.Parse(testCaseId, CultureInfo.InvariantCulture));
+                    var testCase = teamProject.TestCases.Find(Int32.Parse(testCaseId, CultureInfo.InvariantCulture));
                     if (testCase != null)
                     {
                         if (UpdateTestCase(testCase, scenarioDefinition, hash, fieldsCollection)) {
@@ -320,7 +367,7 @@ namespace Gherkin2MtmApi.Helpers
                 return false;
             }
 
-            if (ValidateRequiredTags(scenarioTags, fieldsCollection))
+            if (ValidateTags(scenarioTags, fieldsCollection))
             {
                 return true;
             }
@@ -411,7 +458,7 @@ namespace Gherkin2MtmApi.Helpers
                 Logger.Info(exception.StackTrace);
                 Logger.Error(
                     ResourceStrings.DECORATION,
-                    string.Format(
+                    String.Format(
                         CultureInfo.InvariantCulture, SyncUtil.ABORTED_MESSAGE,
                         "Something is wrong, check the field values"));
             }
