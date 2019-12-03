@@ -89,9 +89,19 @@ namespace Gherkin2MtmApi.Helpers
             foreach (var testCaseField in testCaseFields)
             {
                 var tagValue = GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
-                if (!testCaseField.Required && tagValue.Length <= 0)
+                if (!testCaseField.Required && tagValue.Trim().Length <= 0
+                    && testCaseField.RequirementField != null
+                    && testCaseField.RequirementField.Trim().Length <= 0)
                 {
                     continue;
+                }
+
+                if (testCaseField.RequirementField != null && testCaseField.RequirementField.Trim().Length > 0)
+                {
+                    tagValue = GetTagValue(scenarioTags, SyncUtil.REQUIREMENT_TAG_NAME, testCaseField.Prefix);
+                    var tagValues = tagValue.Split(',').Select(requirementId =>
+                        FeatureHelper.GetWorkItemField(testCaseField.RequirementField, requirementId));
+                    tagValue = tagValues.Aggregate((i, j) => $"{i},{j}");
                 }
 
                 if (tagValue.Length > 0)

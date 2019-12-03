@@ -144,22 +144,19 @@ namespace Gherkin2MtmApi.Helpers
                 }
 
                 var tag = GetTag(scenarioTags, testCaseField.Tag);
-                if (tag == null)
-                {
-                    continue;
-                }
-
                 var tagValue = TestCaseHelper.GetTagValue(scenarioTags, testCaseField.Tag, testCaseField.Prefix);
-                if (tagValue.Length <= 0)
+                if (tag != null && tagValue.Length <= 0)
                 {
                     Logger.Error(
                         $"{testCaseField.Tag} does not have a value associated with it");
                     return false;
                 }
 
-                if (testCaseField.Tag == SyncUtil.REQUIREMENT_TAG_NAME 
-                    && testCaseField.RequirementField.Trim().Length > 0
-                    && !IsValidRequirement(testCaseField, tagValue))
+                if (testCaseField.RequirementField == null ||
+                    testCaseField.RequirementField.Trim().Length <= 0) continue;
+
+                tagValue = TestCaseHelper.GetTagValue(scenarioTags, SyncUtil.REQUIREMENT_TAG_NAME, "");
+                if (tagValue.Trim().Length > 0 && !IsValidRequirement(testCaseField, tagValue))
                 {
                     return false;
                 }
