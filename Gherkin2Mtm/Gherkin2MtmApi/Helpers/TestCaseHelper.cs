@@ -20,7 +20,10 @@ namespace Gherkin2MtmApi.Helpers
             var isScenarioOutline = scenarioDefinition is ScenarioOutline;
             AddBackground(background, testCase);
             StepHelper.AddSteps(testCase, scenarioDefinition?.Steps, "", isScenarioOutline);
-            if (!isScenarioOutline) return;
+            if (!isScenarioOutline) {
+                testCase.DefaultTable.Reset();
+                return;
+            }
 
             var scenarioOutline = (ScenarioOutline)scenarioDefinition;
             AddParameters(scenarioOutline, testCase);
