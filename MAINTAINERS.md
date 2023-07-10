@@ -1,2 +1,0 @@
-- [Sreedhar Puttagunta](https://github.com/puttagunta)
-- [Jeroen Knoops](https://github.com/JeroenKnoops)
