@@ -3,7 +3,7 @@
     public static class SyncUtil
     {
         public static string ParameterToken { get; } = "-";
-        public static string MtmTcTagName { get; } = "MTMID";
+        public static string MtmTcTagName { get; } = "TC";
         public static string MtmTcLink { get; } = $"@{MtmTcTagName}:";
         public static string MtmTcIdPattern { get; } = $"{MtmTcLink}([0-9]+)";
         public static string MtmTcLinkTagPattern { get; } = $"{MtmTcLink}[0-9]+";
@@ -14,7 +14,7 @@
         public static string TagNameIdPattern { get; } = @"@(.*):(.*)";
 
         public static string TagsField { get; } = "Tags";
-        public static string VersionField { get; } = "Version";
+        public static string VersionField { get; } = "Rev";
 
         public static string BackgroundPrefix { get; } = "Background: ";
         public static string TagsToken { get; } = ",";

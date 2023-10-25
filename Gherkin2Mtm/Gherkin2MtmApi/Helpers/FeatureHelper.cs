@@ -215,7 +215,7 @@ namespace Gherkin2MtmApi.Helpers
 
         private static void ChurnScenarios(string[] arrLine, Feature feature, ITestManagementTeamProject teamProject,
             ICollection<Tag> tags, string area, IList<TestCaseField> fieldsCollection)
-        {
+         {
             var backgroundSteps = GetBackgroundSteps(arrLine, feature);
             var iterationStart = backgroundSteps.Any() ? 1 : 0;
             ScenarioDefinition background = null;
@@ -245,7 +245,7 @@ namespace Gherkin2MtmApi.Helpers
                     continue;
                 }
 
-                var testCaseId = Regex.Match(mtmIdTag.Name, SyncUtil.MtmTcIdPattern).Groups[1].Value;
+                var testCaseId = Regex.Match(mtmIdTag.Name.ToUpperInvariant(), SyncUtil.MtmTcIdPattern).Groups[1].Value;
                 try
                 {
                     var testCase = teamProject.TestCases.Find(Int32.Parse(testCaseId, CultureInfo.InvariantCulture));
@@ -298,6 +298,24 @@ namespace Gherkin2MtmApi.Helpers
             var testCase = teamProject.TestCases.Create();
             TestCaseHelper.UpdateTestCaseDetails(scenarioDefinition, testCase);
             TestCaseHelper.UpdateTestcaseFields(scenarioTags, testCase, fieldsCollection);
+            var stories = scenarioTags.Where(z => z.Name.ToUpperInvariant().StartsWith("@STORY:")).ToList();
+            var bugs = scenarioTags.Where(z => z.Name.ToUpperInvariant().StartsWith("@BUG:")).ToList();
+
+            var links = new List<int>();
+
+            foreach (var link in stories)
+            {
+                var linkNumber = Regex.Match(link.Name.ToUpperInvariant(), $"@STORY:([0-9]+)").Groups[1].Value;
+                links.Add(int.Parse(linkNumber));
+            }
+
+            foreach (var bug in bugs)
+            {
+                var linkNumber = Regex.Match(bug.Name.ToUpperInvariant(), $"@BUG:([0-9]+)").Groups[1].Value;
+                links.Add(int.Parse(linkNumber));
+            }
+
+            var x = TestCaseHelper.UpdateLinks(links, testCase);
             testCase.WorkItem.Fields["Reason"].Value = SyncUtil.REASON;
             testCase.State = SyncUtil.TestCaseStateReady;
             return testCase;
@@ -345,6 +363,26 @@ namespace Gherkin2MtmApi.Helpers
                 scenarioTags,
                 testCase,
                 fieldsCollection);
+
+            var stories = scenarioTags.Where(z => z.Name.ToUpperInvariant().StartsWith("@STORY:")).ToList();
+            var bugs = scenarioTags.Where(z => z.Name.ToUpperInvariant().StartsWith("@BUG:")).ToList();
+
+            var links = new List<int>();
+
+            foreach (var link in stories)
+            {
+                var linkNumber = Regex.Match(link.Name.ToUpperInvariant(), $"@STORY:([0-9]+)").Groups[1].Value;
+                links.Add(int.Parse(linkNumber));
+            }
+
+            foreach (var bug in bugs)
+            {
+                var linkNumber = Regex.Match(bug.Name.ToUpperInvariant(), $"@BUG:([0-9]+)").Groups[1].Value;
+                links.Add(int.Parse(linkNumber));
+            }
+
+            var x = TestCaseHelper.UpdateLinks(links, testCase);
+
             var scenarioStepsUptoDate = VersionUtils.IsUptoDate(hash, currentVersion);
             if (isTestCaseDetailsChanged || isTestCaseFieldsChanged || !scenarioStepsUptoDate)
             {
@@ -414,7 +452,6 @@ namespace Gherkin2MtmApi.Helpers
                 isUpdate = false;
             }
 
-            testCase.WorkItem.Fields[SyncUtil.VersionField].Value = hash;
             UpdateTestCaseArea(testCase, area);
             TestCaseHelper.UpdateTestcase(background, scenarioDefinition, testCase);
             if (!IsTestCaseValid(testCase))

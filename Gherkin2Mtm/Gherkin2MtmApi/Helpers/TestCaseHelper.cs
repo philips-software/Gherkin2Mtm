@@ -8,6 +8,7 @@ using Gherkin2MtmApi.Models;
 using Gherkin2MtmApi.Utils;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.TestManagement.Client;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace Gherkin2MtmApi.Helpers
 {
@@ -57,6 +58,42 @@ namespace Gherkin2MtmApi.Helpers
 
             testCase.WorkItem.Fields[SyncUtil.TagsField].Value = tags;
             return true;
+        }
+
+        public static bool UpdateLinks(IList<int> newLinks, ITestBase testCase)
+        {
+            if (testCase == null)
+            {
+                return false;
+            }
+
+            if (newLinks.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (var link in newLinks)
+            {
+                if (!LinkAlreadyExists(link, testCase.WorkItem.Links))
+                {
+                    var externalLink = new RelatedLink(link);
+                    testCase.WorkItem.Links.Add(externalLink);
+                }
+            }
+
+            return true;
+        }
+
+        private static bool LinkAlreadyExists(int workItemId, LinkCollection links)
+        {
+            foreach (RelatedLink link in links)
+            {
+                if (workItemId == link.RelatedWorkItemId)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static bool UpdateTestCaseDetails(ScenarioDefinition scenarioDefinition, ITestBase testCase)

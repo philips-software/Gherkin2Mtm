@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Gherkin2Mtm": {
+      "commandName": "Project",
+      "commandLineArgs": "--server <url> --project <project> --personalAccessToken <PAT> --featuresPath <feature path>"
+    }
+  }
+}
